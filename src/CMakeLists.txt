@@ -289,6 +289,8 @@ set(LVGL_SRC
         libs/lvgl/src/lv_objx/lv_slider.c
         libs/lvgl/src/lv_objx/lv_ddlist.c
         libs/lvgl/src/lv_objx/lv_ddlist.h
+        libs/lvgl/src/lv_objx/lv_line.c
+        libs/lvgl/src/lv_objx/lv_line.h
         )
 
 list(APPEND IMAGE_FILES
@@ -322,6 +324,7 @@ list(APPEND IMAGE_FILES
         )
 
 list(APPEND SOURCE_FILES
+        BootloaderVersion.cpp
         logging/NrfLogger.cpp
         displayapp/DisplayApp.cpp
         displayapp/screens/Screen.cpp
@@ -334,6 +337,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/Modal.cpp
         displayapp/screens/BatteryIcon.cpp
         displayapp/screens/BleIcon.cpp
+        displayapp/screens/NotificationIcon.cpp
         displayapp/screens/Brightness.cpp
         displayapp/screens/SystemInfo.cpp
         displayapp/screens/Label.cpp
@@ -341,6 +345,7 @@ list(APPEND SOURCE_FILES
         displayapp/screens/Music.cpp
         displayapp/screens/FirmwareValidation.cpp
         displayapp/screens/ApplicationList.cpp
+        displayapp/screens/Notifications.cpp
         main.cpp
         drivers/St7789.cpp
         drivers/SpiNorFlash.cpp
@@ -364,6 +369,7 @@ list(APPEND SOURCE_FILES
         components/ble/MusicService.cpp
         components/ble/BatteryInformationService.cpp
         components/ble/ImmediateAlertService.cpp
+        components/ble/ServiceDiscovery.cpp
         components/firmwarevalidator/FirmwareValidator.cpp
         drivers/Cst816s.cpp
         FreeRTOS/port.c
@@ -397,6 +403,7 @@ list(APPEND GRAPHICS_SOURCE_FILES
         )
 
 set(INCLUDE_FILES
+        BootloaderVersion.h
         logging/Logger.h
         logging/NrfLogger.h
         displayapp/DisplayApp.h
@@ -410,7 +417,8 @@ set(INCLUDE_FILES
         displayapp/screens/DropDownDemo.h
         displayapp/screens/Modal.h
         displayapp/screens/BatteryIcon.h
-        displayapp/screens/BleIcon.cpp
+        displayapp/screens/BleIcon.h
+        displayapp/screens/NotificationIcon.h
         displayapp/screens/Brightness.h
         displayapp/screens/SystemInfo.h
         displayapp/screens/ScreenList.h
@@ -419,6 +427,7 @@ set(INCLUDE_FILES
         displayapp/screens/FirmwareValidation.h
         displayapp/screens/ApplicationList.h
         displayapp/Apps.h
+        displayapp/screens/Notifications.h
         drivers/St7789.h
         drivers/SpiNorFlash.h
         drivers/SpiMaster.h
@@ -439,6 +448,8 @@ set(INCLUDE_FILES
         components/firmwarevalidator/FirmwareValidator.h
         components/ble/BatteryInformationService.h
         components/ble/ImmediateAlertService.h
+        components/ble/ServiceDiscovery.h
+        components/ble/BleClient.h
         drivers/Cst816s.h
         FreeRTOS/portmacro.h
         FreeRTOS/portmacro_cmsis.h
@@ -702,7 +713,7 @@ if (USE_JLINK)
             )
     add_custom_target("FLASH_${EXECUTABLE_NAME}"
             DEPENDS ${EXECUTABLE_NAME}
-            COMMAND ${NRFJPROG} --program ${EXECUTABLE_NAME}.hex -f ${NRF_TARGET} --sectorerase
+            COMMAND ${NRFJPROG} --program ${EXECUTABLE_FILE_NAME}.hex -f ${NRF_TARGET} --sectorerase
             COMMAND sleep 0.5s
             COMMAND ${NRFJPROG} --reset -f ${NRF_TARGET}
             COMMENT "flashing ${EXECUTABLE_NAME}.hex"
